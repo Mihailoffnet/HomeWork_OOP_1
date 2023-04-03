@@ -25,21 +25,21 @@ class Student:
         else:
             result_s = round(sum(list)/len(list), 1)
         return result_s
-        
-    def __str__(self):
-        res = f'Имя: {self.name}\nФамилия: {self.surname}\nСредняя оценка за лекции: {self._rate_s(self.grades)}\nКурсы в процессе изучения: {", ".join(self.courses_in_progress)}\nЗавершенные курсы: {", ".join(self.finished_courses)}'
-        return res
-
+    
     def compare_rate_s (self, student):
         if not isinstance(student, Student): # проверка является ли объект экземпляром указанного класса
             return
-        if student._rate_s(student.grades) < self._rate_s(self.grades):
+        elif student._rate_s(student.grades) < self._rate_s(self.grades):
             print(f'Средний балл {self.name} {self.surname} - {self._rate_s(self.grades)}, это больше, чем {student._rate_s(student.grades)} у {student.name} {student.surname}')
         elif student._rate_s(student.grades) == self._rate_s(self.grades):
             print(f'У {self.name} {self.surname} и {student.name} {student.surname} одинаковый средний балл {self._rate_s(self.grades)}')
         else:
             print(f'Средний балл {self.name} {self.surname} - {self._rate_s(self.grades)}, это меньше, чем {student._rate_s(student.grades)} у {student.name} {student.surname}')  
         
+    def __str__(self):
+        res = f'Имя: {self.name}\nФамилия: {self.surname}\nСредняя оценка за лекции: {self._rate_s(self.grades)}\nКурсы в процессе изучения: {", ".join(self.courses_in_progress)}\nЗавершенные курсы: {", ".join(self.finished_courses)}'
+        return res
+
 class Mentor:
     def __init__(self, name, surname):
         self.name = name
@@ -61,7 +61,17 @@ class Lecturer(Mentor):
         else:
             result_l = round(sum(list)/len(list), 1)
         return result_l
-            
+
+    def compare_rate_l (self, lecturer):
+        if not isinstance(lecturer, Mentor): # проверка является ли объект экземпляром указанного класса
+            return
+        elif lecturer._rate_l(lecturer.lecturer_grades) < self._rate_l(self.lecturer_grades):
+            print(f'Средний балл {self.name} {self.surname} - {self._rate_l(self.lecturer_grades)}, это больше, чем {lecturer._rate_l(lecturer.lecturer_grades)} у {lecturer.name} {lecturer.surname}')
+        elif lecturer._rate_l(lecturer.lecturer_grades) == self._rate_l(self.lecturer_grades):
+            print(f'У {self.name} {self.surname} и {lecturer.name} {lecturer.surname} одинаковый средний балл {self._rate_l(self.lecturer_grades)}')
+        else:
+            print(f'Средний балл {self.name} {self.surname} - {self._rate_l(self.lecturer_grades)}, это меньше, чем {lecturer._rate_l(lecturer.lecturer_grades)} у {lecturer.name} {lecturer.surname}')  
+                    
     def __str__(self):
         res = f'Имя: {self.name}\nФамилия: {self.surname}\nСредняя оценка за лекции: {self._rate_l(self.lecturer_grades)}'
         return res
@@ -173,3 +183,8 @@ print()
 best_student.compare_rate_s(another_student)
 print()
 another_student.compare_rate_s(best_student)
+
+print()
+cool_lecturer.compare_rate_l(another_lecturer)
+print()
+another_lecturer.compare_rate_l(cool_lecturer)

@@ -16,19 +16,29 @@ class Student:
         else:
             return 'Ошибка'    
 
-    def _rate_l(self, grades):
+    def _rate_s(self, grades):
         list = []
         for value in grades.values():
             list += value
         if len(list) == 0: # без этой проверки при вызове метода до выставления оценок код падает с делением на ноль
-            result = 0
+            result_s = 0
         else:
-            result = round(sum(list)/len(list), 1)
-        return result
+            result_s = round(sum(list)/len(list), 1)
+        return result_s
         
     def __str__(self):
-        res = f'Имя: {self.name}\nФамилия: {self.surname}\nСредняя оценка за лекции: {self._rate_l(self.grades)}\nКурсы в процессе изучения: {", ".join(self.courses_in_progress)}\nЗавершенные курсы: {", ".join(self.finished_courses)}'
+        res = f'Имя: {self.name}\nФамилия: {self.surname}\nСредняя оценка за лекции: {self._rate_s(self.grades)}\nКурсы в процессе изучения: {", ".join(self.courses_in_progress)}\nЗавершенные курсы: {", ".join(self.finished_courses)}'
         return res
+
+    def compare_rate_s (self, student):
+        if not isinstance(student, Student): # проверка является ли объект экземпляром указанного класса
+            return
+        if student._rate_s(student.grades) < self._rate_s(self.grades):
+            print(f'Средний балл {self.name} {self.surname} - {self._rate_s(self.grades)}, это больше, чем {student._rate_s(student.grades)} у {student.name} {student.surname}')
+        elif student._rate_s(student.grades) == self._rate_s(self.grades):
+            print(f'У {self.name} {self.surname} и {student.name} {student.surname} одинаковый средний балл {self._rate_s(self.grades)}')
+        else:
+            print(f'Средний балл {self.name} {self.surname} - {self._rate_s(self.grades)}, это меньше, чем {student._rate_s(student.grades)} у {student.name} {student.surname}')  
         
 class Mentor:
     def __init__(self, name, surname):
@@ -36,8 +46,6 @@ class Mentor:
         self.surname = surname
         self.courses_attached = []
         
- 
-
 class Lecturer(Mentor):
     def __init__(self, name, surname):
         super().__init__(name, surname)
@@ -49,10 +57,10 @@ class Lecturer(Mentor):
         for value in lecturer_grades.values():
             list += value
         if len(list) == 0: 
-            result = 0
+            result_l = 0
         else:
-            result = round(sum(list)/len(list), 1)
-        return result
+            result_l = round(sum(list)/len(list), 1)
+        return result_l
             
     def __str__(self):
         res = f'Имя: {self.name}\nФамилия: {self.surname}\nСредняя оценка за лекции: {self._rate_l(self.lecturer_grades)}'
@@ -74,36 +82,37 @@ class Reviewer(Mentor):
         return res
 
 # Создаем объект класса "Лучший студент" и назначаем курсы, которые он изучает
-best_student = Student('Mikhaylov', 'Viktor', 'M')
+best_student = Student('Viktor', 'Mikhaylov', 'M')
 best_student.courses_in_progress += ['Python from zero'] # или лучше сразу указать все курсы? ['Python from zero', 'GIT', 'OOP'] 
 best_student.courses_in_progress += ['OOP']
 best_student.finished_courses += ['GIT']
 
 # Создаем объект класса "Другой студент" и назначаем курсы, которые он изучает
 another_student = Student('Another', 'Student', 'M')
-another_student.courses_in_progress += ['GIT'] # или лучше сразу указать все курсы? ['Python from zero', 'GIT', 'OOP'] 
+another_student.courses_in_progress += ['GIT']
 another_student.courses_in_progress += ['OOP']
 another_student.finished_courses += ['Python from zero']
 
-# Создаем объект "Крутой проверяющий" и назначаем курсы, которые он проверяет
-cool_reviewer = Reviewer('Dmitry', 'Kachalov')
-cool_reviewer.courses_attached += ['GIT']
+# Создаем объект "Крутой проверяющий" и назначаем курсы, которые он проверяет, выставляем оценки студентам
+cool_reviewer = Reviewer('Alexandr', 'Bardin')
+cool_reviewer.courses_attached += ['OOP']
 cool_reviewer.courses_attached += ['Python from zero']
-cool_reviewer.rate_hw(best_student, 'GIT', 7) 
+cool_reviewer.courses_attached += ['GIT']
+cool_reviewer.rate_hw(best_student, 'OOP', 7) 
 cool_reviewer.rate_hw(best_student, 'Python from zero', 9)
 cool_reviewer.rate_hw(best_student, 'Python from zero', 8)
-cool_reviewer.rate_hw(another_student, 'GIT', 6) 
-cool_reviewer.rate_hw(another_student, 'Python from zero', 8)
-cool_reviewer.rate_hw(another_student, 'Python from zero', 8)
+cool_reviewer.rate_hw(another_student, 'OOP', 6) 
+cool_reviewer.rate_hw(another_student, 'GIT', 8)
+cool_reviewer.rate_hw(another_student, 'GIT', 7)
 
-# Создаем объект "другой проверяющий" и назначаем курсы, которые он проверяет
+# Создаем объект "другой проверяющий" и назначаем курсы, которые он проверяет, выставляем оценки студентам
 another_reviewer = Reviewer('Another', 'Reviewer')
 another_reviewer.courses_attached += ['GIT']
 another_reviewer.courses_attached += ['OOP']
 another_reviewer.rate_hw(another_student, 'GIT', 6) 
 another_reviewer.rate_hw(another_student, 'GIT', 8)
 another_reviewer.rate_hw(another_student, 'OOP', 7)
-another_reviewer.rate_hw(best_student, 'GIT', 10) 
+another_reviewer.rate_hw(best_student, 'GIT', 10) # Оценка не выставится, так как курс студентом уже закончен
 another_reviewer.rate_hw(best_student, 'GIT', 8)
 another_reviewer.rate_hw(best_student, 'OOP', 9)
 
@@ -112,8 +121,7 @@ cool_lecturer = Lecturer('Oleg', 'Bulygin')
 cool_lecturer.courses_attached += ['Python from zero']
 cool_lecturer.courses_attached += ['OOP']
 best_student.rate_hw(cool_lecturer, 'OOP', 10)
-best_student.rate_hw(cool_lecturer, 'GIT', 10) 
-# оценка не добавится, так как курс студентом уже закончен, и лектор его не преподает, сработает проверка первого из этих двух условий
+best_student.rate_hw(cool_lecturer, 'GIT', 10) # оценка не добавится, так как курс студентом уже закончен, и лектор его не преподает, сработает проверка первого из этих двух условий
 best_student.rate_hw(cool_lecturer, 'Python from zero', 9)
 best_student.rate_hw(cool_lecturer, 'Python from zero', 10)
 another_student.rate_hw(cool_lecturer, 'OOP', 8)
@@ -160,3 +168,8 @@ print('Другой лектор')
 print(another_lecturer)
 # print(f'Лектор ведет курсы: {another_lecturer.courses_attached}')
 # print(f'Оценки другому лектору: {another_lecturer.lecturer_grades}')
+
+print()
+best_student.compare_rate_s(another_student)
+print()
+another_student.compare_rate_s(best_student)

@@ -20,7 +20,7 @@ class Student:
         list = []
         for value in grades.values():
             list += value
-        if len(list) == 0:
+        if len(list) == 0: # без этой проверки при вызове метода до выставления оценок код падает с делением на ноль
             result = 0
         else:
             result = round(sum(list)/len(list), 1)
@@ -48,7 +48,7 @@ class Lecturer(Mentor):
         list = []
         for value in lecturer_grades.values():
             list += value
-        if len(list) == 0:
+        if len(list) == 0: 
             result = 0
         else:
             result = round(sum(list)/len(list), 1)
@@ -85,12 +85,6 @@ another_student.courses_in_progress += ['GIT'] # или лучше сразу у
 another_student.courses_in_progress += ['OOP']
 another_student.finished_courses += ['Python from zero']
 
-# Создаем объект класса "Другой студент" и назначаем курсы, которые он изучает
-another_student = Student('Another', 'Student', 'M')
-another_student.courses_in_progress += ['GIT'] # или лучше сразу указать все курсы? ['Python from zero', 'GIT', 'OOP'] 
-another_student.courses_in_progress += ['OOP']
-another_student.finished_courses += ['Python from zero']
-
 # Создаем объект "Крутой проверяющий" и назначаем курсы, которые он проверяет
 cool_reviewer = Reviewer('Dmitry', 'Kachalov')
 cool_reviewer.courses_attached += ['GIT']
@@ -114,7 +108,7 @@ another_reviewer.rate_hw(best_student, 'GIT', 8)
 another_reviewer.rate_hw(best_student, 'OOP', 9)
 
 # Создаем объект "Крутой лектор" и назначаем курсы, которые он преподает, выставляем ему оценки
-cool_lecturer = Lecturer('Oleg', 'bulygin')
+cool_lecturer = Lecturer('Oleg', 'Bulygin')
 cool_lecturer.courses_attached += ['Python from zero']
 cool_lecturer.courses_attached += ['OOP']
 best_student.rate_hw(cool_lecturer, 'OOP', 10)

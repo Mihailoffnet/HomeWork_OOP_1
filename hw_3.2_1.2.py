@@ -17,6 +17,8 @@ class Student:
             return 'Ошибка'    
 
     def _rate_s(self, grades):
+        if not isinstance(self, Student): # проверка является ли объект экземпляром указанного класса
+            return
         list = []
         for value in grades.values():
             list += value
@@ -25,7 +27,7 @@ class Student:
         else:
             result_s = round(sum(list)/len(list), 1)
         return result_s
-    
+
     def compare_rate_s (self, student):
         if not isinstance(student, Student): # проверка является ли объект экземпляром указанного класса
             return
@@ -37,6 +39,8 @@ class Student:
             print(f'Средний балл {self.name} {self.surname} - {self._rate_s(self.grades)}, это меньше, чем {student._rate_s(student.grades)} у {student.name} {student.surname}')  
         
     def __str__(self):
+        if not isinstance(self, Student): # проверка является ли объект экземпляром указанного класса
+            return
         res = f'Имя: {self.name}\nФамилия: {self.surname}\nСредняя оценка за лекции: {self._rate_s(self.grades)}\nКурсы в процессе изучения: {", ".join(self.courses_in_progress)}\nЗавершенные курсы: {", ".join(self.finished_courses)}'
         return res
 
@@ -52,7 +56,8 @@ class Lecturer(Mentor):
         self.lecturer_grades = {}
 
     def _rate_l(self, lecturer_grades):
-        # average = f'self: {self} lecturer_grades: {lecturer_grades}'
+        if not isinstance(self, Lecturer): # проверка является ли объект экземпляром указанного класса
+            return
         list = []
         for value in lecturer_grades.values():
             list += value
@@ -63,6 +68,8 @@ class Lecturer(Mentor):
         return result_l
 
     def compare_rate_l (self, lecturer):
+        if not isinstance(self, Lecturer): # проверка является ли объект экземпляром указанного класса
+            return       
         if not isinstance(lecturer, Mentor): # проверка является ли объект экземпляром указанного класса
             return
         elif lecturer._rate_l(lecturer.lecturer_grades) < self._rate_l(self.lecturer_grades):
@@ -88,8 +95,40 @@ class Reviewer(Mentor):
             return 'Ошибка'
         
     def __str__(self):
+        if not isinstance(self, Reviewer): # проверка является ли объект экземпляром указанного класса
+            return
         res = f'Имя: {self.name}\nФамилия: {self.surname}'
         return res
+
+# функции для подсчета средней оценки в рамках конкретного курса:
+
+def average_rate_cours_s(object_list, course_for_rate):
+    grades_list = []
+    for object in object_list:
+        for key in (object.grades.keys()):
+            if key == course_for_rate:
+                grades_list += object.grades[key]
+    if len(grades_list) == 0:
+        average_rate_s = 0
+    else:
+        average_rate_s = round(sum(grades_list)/len(grades_list), 1)
+    print(f'Средний балл по курсу {course_for_rate} - {average_rate_s} среди всех студентов')
+    return average_rate_s
+
+def average_rate_cours_l(object_list, course_for_rate):
+    grades_list = []
+    for object in object_list:
+        for key in (object.lecturer_grades.keys()):
+            if key == course_for_rate:
+                grades_list += object.lecturer_grades[key]
+    if len(grades_list) == 0:
+        average_rate_l = 0
+    else:
+        average_rate_l = round(sum(grades_list)/len(grades_list), 1)
+    print(f'Средний балл по курсу {course_for_rate} - {average_rate_l} среди всех лекторов')
+    return average_rate_l
+
+# Создаем объекты классов, назначаем им атрибуты и запускаем методы:
 
 # Создаем объект класса "Лучший студент" и назначаем курсы, которые он изучает
 best_student = Student('Viktor', 'Mikhaylov', 'M')
@@ -134,7 +173,7 @@ best_student.rate_hw(cool_lecturer, 'OOP', 10)
 best_student.rate_hw(cool_lecturer, 'GIT', 10) # оценка не добавится, так как курс студентом уже закончен, и лектор его не преподает, сработает проверка первого из этих двух условий
 best_student.rate_hw(cool_lecturer, 'Python from zero', 9)
 best_student.rate_hw(cool_lecturer, 'Python from zero', 10)
-another_student.rate_hw(cool_lecturer, 'OOP', 8)
+another_student.rate_hw(cool_lecturer, 'OOP', 7)
 another_student.rate_hw(cool_lecturer, 'Python from zero', 8)
 
 # Создаем объект "Другой лектор" и назначаем курсы, которые он преподает, выставляем ему оценки
@@ -180,11 +219,12 @@ print(another_lecturer)
 # print(f'Оценки другому лектору: {another_lecturer.lecturer_grades}')
 
 print()
-best_student.compare_rate_s(another_student)
-print()
-another_student.compare_rate_s(best_student)
+average_rate_cours_s([best_student,another_student], 'OOP')
+average_rate_cours_s([best_student,another_student], 'Python from zero')
+average_rate_cours_s([best_student,another_student], 'GIT')
 
 print()
-cool_lecturer.compare_rate_l(another_lecturer)
+average_rate_cours_l([cool_lecturer,another_lecturer], 'OOP')
+average_rate_cours_l([cool_lecturer,another_lecturer], 'Python from zero')
+average_rate_cours_l([cool_lecturer,another_lecturer], 'GIT')
 print()
-another_lecturer.compare_rate_l(cool_lecturer)
